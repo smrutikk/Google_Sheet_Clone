@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .toolbar {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f1f1f1;
+    padding: 10px;
+  }
+  
+  .formula-bar input {
+    width: 100%;
+  }
+  
+  .spreadsheet-container {
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  th, td {
+    width: 80px;
+    height: 40px;
+    text-align: center;
+    vertical-align: middle;
+    min-width: 80px;
+    max-width: 80px;
+  }
+  
+  td[contenteditable="true"]:focus {
+    background-color: #f0f8ff;
+  }
+  
+  .cell {
+    cursor: pointer;
+  }
+  
+  .active-cell {
+    background-color: #dbeafe;
+  }
+  
+  #resize-controls {
+    margin-top: 10px;
+    text-align: center;
+  }
+  

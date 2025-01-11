@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Sheets Clone</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-4">
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <button class="btn btn-secondary">File</button>
+      <button class="btn btn-secondary">Edit</button>
+      <button class="btn btn-secondary">View</button>
+      <button class="btn btn-secondary">Insert</button>
+      <button class="btn btn-secondary">Format</button>
+      <button class="btn btn-secondary">Data</button>
+      <button class="btn btn-secondary">Tools</button>
+    </div>
+
+    <!-- Formula Bar -->
+    <div class="formula-bar mt-3">
+      <input type="text" id="formula-bar" class="form-control" placeholder="Enter Formula">
+    </div>
+
+    <!-- Spreadsheet -->
+    <div class="spreadsheet-container mt-4">
+      <table id="spreadsheet" class="table table-bordered">
+        <thead>
+          <tr>
+            <th></th>
+            <!-- Column Headers -->
+            <script>
+              for (let i = 0; i < 26; i++) {
+                document.write(`<th>${String.fromCharCode(65 + i)}</th>`);
+              }
+            </script>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row Headers + Cells -->
+          <script>
+            for (let i = 1; i <= 20; i++) {
+              document.write('<tr>');
+              document.write(`<td>${i}</td>`); // Row headers
+              for (let j = 0; j < 26; j++) {
+                document.write('<td contenteditable="true" class="cell"></td>'); // Editable cells
+              }
+              document.write('</tr>');
+            }
+          </script>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Resize Controls (Optional for column resizing) -->
+    <div id="resize-controls">
+      <button class="btn btn-primary" id="add-row">Add Row</button>
+      <button class="btn btn-primary" id="add-col">Add Column</button>
+      <button class="btn btn-danger" id="delete-row">Delete Row</button>
+      <button class="btn btn-danger" id="delete-col">Delete Column</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+
