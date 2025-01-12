@@ -3,90 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Clone</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
-    <link src="style.css" rel="stylesheet">
+    <title>Spreadsheet Application</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Top Navigation -->
-    <div class="top-nav">
-        <div class="sheet-title">Untitled spreadsheet</div>
-    </div>
-
-    <!-- Main Toolbar -->
-    <div class="toolbar">
-        <div class="toolbar-group">
-            <button title="Undo"><span>↶</span></button>
-            <button title="Redo"><span>↷</span></button>
-        </div>
-        <div class="toolbar-group">
-            <button title="Print"><span>🖨️</span></button>
-            <button title="Paint format"><span>🎨</span></button>
-        </div>
-        <div class="toolbar-group">
-            <select style="height: 28px; padding: 0 4px;">
-                <option>Arial</option>
-                <option>Times New Roman</option>
-                <option>Courier New</option>
-            </select>
-            <select style="height: 28px; padding: 0 4px;">
-                <option>10</option>
-                <option>11</option>
-                <option selected>12</option>
-                <option>14</option>
-                <option>16</option>
-            </select>
-        </div>
-        <div class="toolbar-group">
-            <button title="Bold"><strong>B</strong></button>
-            <button title="Italic"><em>I</em></button>
-            <button title="Strikethrough"><span style="text-decoration: line-through">S</span></button>
-        </div>
-        <div class="toolbar-group">
-            <button title="Text color">A</button>
-            <button title="Fill color">🎨</button>
-            <button title="Borders">⧉</button>
-        </div>
-        <div class="toolbar-group">
-            <button title="Merge cells">⧉</button>
-        </div>
-    </div>
-
-    <!-- Formula Bar -->
-    <div class="formula-bar">
-        <div class="fx-label">fx</div>
-        <div class="cell-address">A1</div>
-        <input type="text" class="formula-input" placeholder="Enter a formula">
-    </div>
-
-    <!-- Grid Container -->
-    <div class="grid-container">
-        <div class="corner-header"></div>
-        <div class="column-headers" id="columnHeaders"></div>
-        <div class="row-headers" id="rowHeaders"></div>
-        <div class="grid" id="grid"></div>
-    </div>
     <div class="spreadsheet-container">
-      <div class="formula-bar">
-          <span>fx</span>
-          <input type="text" class="cell-address" readonly>
-          <input type="text" class="formula-input" placeholder="Enter formula or value">
-      </div>
-      <div class="grid-container">
-          <div class="corner-header"></div>
-          <div class="column-headers" id="columnHeaders"></div>
-          <div class="row-headers" id="rowHeaders"></div>
-          <div class="grid" id="grid"></div>
-      </div>
-  </div>
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <select id="fontFamily">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+            </select>
+            <select id="fontSize">
+                <option value="10">10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+            </select>
+            <button id="bold"><strong>B</strong></button>
+            <button id="italic"><em>I</em></button>
+            <button id="colorPicker">A</button>
+            <input type="color" id="textColor" style="display: none;">
+            
+            <!-- Function buttons -->
+            <div class="function-buttons">
+                <button id="sumButton">SUM</button>
+                <button id="averageButton">AVERAGE</button>
+                <button id="maxButton">MAX</button>
+                <button id="minButton">MIN</button>
+                <button id="countButton">COUNT</button>
+            </div>
+            
+            <!-- Data quality buttons -->
+            <div class="data-quality-buttons">
+                <button id="trimButton">TRIM</button>
+                <button id="upperButton">UPPER</button>
+                <button id="lowerButton">LOWER</button>
+                <button id="removeDuplicatesButton">REMOVE DUPLICATES</button>
+                <button id="findReplaceButton">FIND & REPLACE</button>
+            </div>
+        </div>
 
-    <!-- Sheet Tabs -->
-    <div class="sheet-tabs">
-        <div class="sheet-tab active">Sheet1</div>
-        <div class="sheet-tab">+</div>
+        <!-- Formula Bar -->
+        <div class="formula-bar">
+            <span class="cell-reference">A1</span>
+            <input type="text" id="formulaInput" placeholder="Enter a formula">
+        </div>
+
+        <!-- Spreadsheet Grid -->
+        <div class="spreadsheet-grid">
+            <!-- Column Headers -->
+            <div class="column-headers" id="columnHeaders"></div>
+            
+            <!-- Row Headers -->
+            <div class="row-headers" id="rowHeaders"></div>
+            
+            <!-- Cells Container -->
+            <div class="cells-container" id="cellsContainer"></div>
+        </div>
+
+        <!-- Find and Replace Dialog -->
+        <div id="findReplaceDialog" class="dialog" style="display: none;">
+            <div class="dialog-content">
+                <h3>Find and Replace</h3>
+                <input type="text" id="findText" placeholder="Find...">
+                <input type="text" id="replaceText" placeholder="Replace with...">
+                <button id="findNext">Find Next</button>
+                <button id="replaceAll">Replace All</button>
+                <button id="closeDialog">Close</button>
+            </div>
+        </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
-       
