@@ -1,129 +1,162 @@
-// Active Cell Selection
-const spreadsheet = document.getElementById('spreadsheet');
-let activeCell = null;
-let activeCellData = "";
-
-spreadsheet.addEventListener('click', (e) => {
-  if (e.target.tagName === 'TD') {
-    // Remove the active class from all cells
-    document.querySelectorAll('.cell').forEach(cell => cell.classList.remove('active-cell'));
-    
-    // Set the active class on the clicked cell
-    e.target.classList.add('active-cell');
-    activeCell = e.target;
-    activeCellData = e.target.innerText;
-    document.getElementById('formula-bar').value = activeCell.innerText;
-  }
-});
-
-// Update active cell when formula bar is modified
-document.getElementById('formula-bar').addEventListener('input', (e) => {
-  if (activeCell) {
-    activeCell.innerText = e.target.value;
-    updateDependencies(activeCell);
-  }
-});
-
-// Resize functionality for columns and rows (Adding/Deleting)
-document.getElementById('add-row').addEventListener('click', () => {
-  const table = document.getElementById('spreadsheet');
-  const rowCount = table.rows.length;
-  const newRow = table.insertRow(rowCount - 1);  // Insert before the last (empty row)
-  
-  // Add a row of cells
-  for (let i = 0; i < 26; i++) {
-    const newCell = newRow.insertCell(i);
-    newCell.setAttribute("contenteditable", "true");
-    newCell.classList.add("cell");
-  }
-});
-
-document.getElementById('add-col').addEventListener('click', () => {
-  const table = document.getElementById('spreadsheet');
-  const rows = table.rows;
-  
-  // Add a new column to each row
-  for (let i = 0; i < rows.length; i++) {
-    const newCell = rows[i].insertCell(rows[i].cells.length - 1);
-    newCell.setAttribute("contenteditable", "true");
-    newCell.classList.add("cell");
+class GoogleSheetsClone {
+  constructor() {
+      this.rows = 100;
+      this.cols = 26;
+      this.selectedCell = null;
+      this.data = {};
+      this.init();
   }
 
-  // Add a new header for the new column
-  const header = table.rows[0].insertCell(0);
-  header.innerText = String.fromCharCode(65 + table.rows[0].cells.length - 2);  // New header like A, B, etc.
-});
-
-document.getElementById('delete-row').addEventListener('click', () => {
-  const table = document.getElementById('spreadsheet');
-  if (table.rows.length > 2) {  // Prevent deletion of the last row
-    table.deleteRow(table.rows.length - 2);  // Delete the second last row (because of the header row)
+  init() {
+      this.createColumnHeaders();
+      this.createRowHeaders();
+      this.createGrid();
+      this.setupEventListeners();
   }
-});
 
-document.getElementById('delete-col').addEventListener('click', () => {
-  const table = document.getElementById('spreadsheet');
-  if (table.rows[0].cells.length > 1) {  // Prevent deletion of the last column
-    for (let i = 0; i < table.rows.length; i++) {
-      table.rows[i].deleteCell(table.rows[i].cells.length - 2);  // Delete the second last column
-    }
+  createColumnHeaders() {
+      const headers = document.getElementById('columnHeaders');
+      for (let i = 0; i < this.cols; i++) {
+          const header = document.createElement('div');
+          header.className = 'col-header';
+          header.textContent = this.columnIndexToLetter(i);
+          
+          const resizeHandle = document.createElement('div');
+          resizeHandle.className = 'resize-handle';
+          header.appendChild(resizeHandle);
+          
+          headers.appendChild(header);
+      }
   }
-});
 
-// Handling formulas (e.g., SUM, AVERAGE)
-function updateDependencies(cell) {
-  const formula = cell.innerText.trim();
-  if (formula.startsWith('=')) {
-    const result = calculateFormula(formula);
-    cell.innerText = result;
+  createRowHeaders() {
+      const headers = document.getElementById('rowHeaders');
+      for (let i = 0; i < this.rows; i++) {
+          const header = document.createElement('div');
+          header.className = 'row-header';
+          header.textContent = i + 1;
+          headers.appendChild(header);
+      }
+  }
+
+  createGrid() {
+      const grid = document.getElementById('grid');
+      for (let i = 0; i < this.rows; i++) {
+          const row = document.createElement('div');
+          row.className = 'row';
+          
+          for (let j = 0; j < this.cols; j++) {
+              const cell = document.createElement('div');
+              cell.className = 'cell';
+              cell.contentEditable = true;
+              cell.dataset.row = i;
+              cell.dataset.col = j;
+              row.appendChild(cell);
+          }
+          
+          grid.appendChild(row);
+      }
+  }
+
+  setupEventListeners() {
+      document.getElementById('grid').addEventListener('click', (e) => {
+          const cell = e.target.closest('.cell');
+          if (cell) {
+              this.selectCell(cell);
+          }
+      });
+
+      document.getElementById('grid').addEventListener('input', (e) => {
+          const cell = e.target.closest('.cell');
+          if (cell) {
+              this.updateCellData(cell);
+          }
+      });
+
+      // Column resize handling
+      document.addEventListener('mousedown', (e) => {
+          if (e.target.className === 'resize-handle') {
+              this.startResize(e);
+          }
+      });
+
+      document.addEventListener('mousemove', (e) => {
+          if (this.resizing) {
+              this.handleResize(e);
+          }
+      });
+
+      document.addEventListener('mouseup', () => {
+          this.resizing = false;
+      });
+  }
+
+  columnIndexToLetter(index) {
+      let letter = '';
+      index++;
+      while (index > 0) {
+          let remainder = (index - 1) % 26;
+          letter = String.fromCharCode(65 + remainder) + letter;
+          index = Math.floor((index - 1) / 26);
+      }
+      return letter;
+  }
+
+  selectCell(cell) {
+      if (this.selectedCell) {
+          this.selectedCell.classList.remove('selected');
+      }
+      this.selectedCell = cell;
+      cell.classList.add('selected');
+      
+      // Update formula bar
+      const address = this.getCellAddress(cell);
+      document.querySelector('.cell-address').textContent = address;
+      document.querySelector('.formula-input').value = cell.textContent;
+  }
+
+  getCellAddress(cell) {
+      const col = this.columnIndexToLetter(parseInt(cell.dataset.col));
+      const row = parseInt(cell.dataset.row) + 1;
+      return `${col}${row}`;
+  }
+
+  updateCellData(cell) {
+      const value = cell.textContent;
+      const address = this.getCellAddress(cell);
+      this.data[address] = value;
+
+      if (value.startsWith('=')) {
+          this.evaluateFormula(cell, value);
+      }
+      document.querySelector('.formula-input').value = value;
+  }
+
+  startResize(e) {
+      this.resizing = true;
+      this.resizeStartX = e.pageX;
+      const headerCell = e.target.closest('.col-header');
+      this.resizeColumnIndex = Array.from(headerCell.parentNode.children).indexOf(headerCell);
+      this.initialWidth = headerCell.offsetWidth;
+  }
+
+  handleResize(e) {
+      if (!this.resizing) return;
+      
+      const diff = e.pageX - this.resizeStartX;
+      const newWidth = Math.max(50, this.initialWidth + diff);
+      
+      // Update column header width
+      const headers = document.querySelectorAll('.col-header');
+      headers[this.resizeColumnIndex].style.width = `${newWidth}px`;
+      
+      // Update all cells in the column
+      const cells = document.querySelectorAll(`.cell:nth-child(${this.resizeColumnIndex + 1})`);
+      cells.forEach(cell => {
+          cell.style.width = `${newWidth}px`;
+      });
   }
 }
 
-function calculateFormula(formula) {
-  const match = formula.match(/=(SUM|AVERAGE|MAX|MIN|COUNT)\(([^)]+)\)/i);
-  if (!match) return formula; // Return as is if not a valid formula
-
-  const [, func, range] = match;
-  const values = getRangeValues(range);
-
-  switch (func.toUpperCase()) {
-    case 'SUM':
-      return values.reduce((a, b) => a + b, 0);
-    case 'AVERAGE':
-      return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-    case 'MAX':
-      return Math.max(...values);
-    case 'MIN':
-      return Math.min(...values);
-    case 'COUNT':
-      return values.filter(v => !isNaN(v)).length;
-    default:
-      return formula; // Fallback
-  }
-}
-
-function getRangeValues(range) {
-  const [start, end] = range.split(':');
-  const { row: startRow, col: startCol } = parseCellId(start);
-  const { row: endRow, col: endCol } = parseCellId(end);
-  const values = [];
-
-  for (let i = startRow; i <= endRow; i++) {
-    for (let j = startCol; j <= endCol; j++) {
-      values.push(getCellValue(i, j));
-    }
-  }
-  return values;
-}
-
-function parseCellId(cellId) {
-  const col = cellId.charCodeAt(0) - 65; // 'A' -> 0, 'B' -> 1, etc.
-  const row = parseInt(cellId.slice(1)) - 1; // '1' -> 0, '2' -> 1, etc.
-  return { row, col };
-}
-
-function getCellValue(row, col) {
-  const table = document.getElementById('spreadsheet');
-  const cell = table.rows[row + 1]?.cells[col + 1]; // Offset for headers
-  return cell ? parseFloat(cell.textContent) || 0 : 0;
-}
+// Initialize the spreadsheet
+new GoogleSheetsClone();

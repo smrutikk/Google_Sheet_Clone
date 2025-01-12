@@ -1,73 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Sheets Clone</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-  <link href="style.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets Clone</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+    <link src="style.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container mt-4">
-    <!-- Toolbar -->
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="sheet-title">Untitled spreadsheet</div>
+    </div>
+
+    <!-- Main Toolbar -->
     <div class="toolbar">
-      <button class="btn btn-secondary">File</button>
-      <button class="btn btn-secondary">Edit</button>
-      <button class="btn btn-secondary">View</button>
-      <button class="btn btn-secondary">Insert</button>
-      <button class="btn btn-secondary">Format</button>
-      <button class="btn btn-secondary">Data</button>
-      <button class="btn btn-secondary">Tools</button>
+        <div class="toolbar-group">
+            <button title="Undo"><span>↶</span></button>
+            <button title="Redo"><span>↷</span></button>
+        </div>
+        <div class="toolbar-group">
+            <button title="Print"><span>🖨️</span></button>
+            <button title="Paint format"><span>🎨</span></button>
+        </div>
+        <div class="toolbar-group">
+            <select style="height: 28px; padding: 0 4px;">
+                <option>Arial</option>
+                <option>Times New Roman</option>
+                <option>Courier New</option>
+            </select>
+            <select style="height: 28px; padding: 0 4px;">
+                <option>10</option>
+                <option>11</option>
+                <option selected>12</option>
+                <option>14</option>
+                <option>16</option>
+            </select>
+        </div>
+        <div class="toolbar-group">
+            <button title="Bold"><strong>B</strong></button>
+            <button title="Italic"><em>I</em></button>
+            <button title="Strikethrough"><span style="text-decoration: line-through">S</span></button>
+        </div>
+        <div class="toolbar-group">
+            <button title="Text color">A</button>
+            <button title="Fill color">🎨</button>
+            <button title="Borders">⧉</button>
+        </div>
+        <div class="toolbar-group">
+            <button title="Merge cells">⧉</button>
+        </div>
     </div>
 
     <!-- Formula Bar -->
-    <div class="formula-bar mt-3">
-      <input type="text" id="formula-bar" class="form-control" placeholder="Enter Formula">
+    <div class="formula-bar">
+        <div class="fx-label">fx</div>
+        <div class="cell-address">A1</div>
+        <input type="text" class="formula-input" placeholder="Enter a formula">
     </div>
 
-    <!-- Spreadsheet -->
-    <div class="spreadsheet-container mt-4">
-      <table id="spreadsheet" class="table table-bordered">
-        <thead>
-          <tr>
-            <th></th>
-            <!-- Column Headers -->
-            <script>
-              for (let i = 0; i < 26; i++) {
-                document.write(`<th>${String.fromCharCode(65 + i)}</th>`);
-              }
-            </script>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Row Headers + Cells -->
-          <script>
-            for (let i = 1; i <= 20; i++) {
-              document.write('<tr>');
-              document.write(`<td>${i}</td>`); // Row headers
-              for (let j = 0; j < 26; j++) {
-                document.write('<td contenteditable="true" class="cell"></td>'); // Editable cells
-              }
-              document.write('</tr>');
-            }
-          </script>
-        </tbody>
-      </table>
+    <!-- Grid Container -->
+    <div class="grid-container">
+        <div class="corner-header"></div>
+        <div class="column-headers" id="columnHeaders"></div>
+        <div class="row-headers" id="rowHeaders"></div>
+        <div class="grid" id="grid"></div>
     </div>
-
-    <!-- Resize Controls (Optional for column resizing) -->
-    <div id="resize-controls">
-      <button class="btn btn-primary" id="add-row">Add Row</button>
-      <button class="btn btn-primary" id="add-col">Add Column</button>
-      <button class="btn btn-danger" id="delete-row">Delete Row</button>
-      <button class="btn btn-danger" id="delete-col">Delete Column</button>
-    </div>
+    <div class="spreadsheet-container">
+      <div class="formula-bar">
+          <span>fx</span>
+          <input type="text" class="cell-address" readonly>
+          <input type="text" class="formula-input" placeholder="Enter formula or value">
+      </div>
+      <div class="grid-container">
+          <div class="corner-header"></div>
+          <div class="column-headers" id="columnHeaders"></div>
+          <div class="row-headers" id="rowHeaders"></div>
+          <div class="grid" id="grid"></div>
+      </div>
   </div>
 
-  <script src="script.js"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Sheet Tabs -->
+    <div class="sheet-tabs">
+        <div class="sheet-tab active">Sheet1</div>
+        <div class="sheet-tab">+</div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-
+       
