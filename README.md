@@ -70,13 +70,3 @@ The Electron framework was chosen for its ability to build cross-platform deskto
 
 ---
 
-## Social Media Handles:
-
-- **LinkedIn:** [Archit Garg](https://www.linkedin.com/in/architgarg603/)  
-- **Instagram:** [_archit.garg_](https://www.instagram.com/_archit.garg_/)
-
-**Email:** architgarg603@gmail.com
-
----
-
-### Thank you!
