@@ -3,7 +3,7 @@
 
 ## Description:
 
-Sheets Clone is a desktop application built using the Electron framework, incorporating technologies like HTML, CSS, JavaScript, and EJS as a templating engine.  
+Google Sheets Clone is a desktop application built using the Electron framework, incorporating technologies like HTML, CSS, JavaScript, and EJS as a templating engine.  
 Some key features of this project are:
 - **Cell Operations:** Change cell size, detect cycles in formulas, and evaluate formulas using a stack-based approach.
 - **File Management:** New, Open, Save functionality.
@@ -38,13 +38,6 @@ The Electron framework was chosen for its ability to build cross-platform deskto
 
 ---
 
-## Screenshots
-
-![Screenshot 1](https://user-images.githubusercontent.com/57831888/102913495-d68fb680-44a4-11eb-8d2f-4e656ed66b4d.png)  
-![Screenshot 2](https://user-images.githubusercontent.com/57831888/102913487-d4c5f300-44a4-11eb-8efd-5469bf74305e.png)
-
----
-
 ## Steps to Run Locally
 
 1. **Clone the repository:**
@@ -68,5 +61,16 @@ The Electron framework was chosen for its ability to build cross-platform deskto
    npm run build
    ```
 
+---
+## Electron Set Up
+
+1. **Ensure presence of Node.js**
+   ```bash
+   npm -v
+   ```
+2. **Install Electron Locally**
+   ```bash
+   npm install --save-dev electron
+   ```
 ---
 
