@@ -932,7 +932,13 @@ function evaluateFormula(formula, currentCell) {
                 case 'trim':
                     result = trimText(args[0]);
                     break;
-                case 'unique':
+                case 'upper':
+                    result = upperText(args[0]);
+                    break;
+                case 'lower':
+                    result = lowerText(args[0]);
+                    break;
+                case 'remove_duplicate':
                     result = removeDuplicates(args);
                     break;
                 case 'replace':
@@ -1138,6 +1144,31 @@ function trimText(arg) {
     }
 }
 
+function upperText(arg) {
+    if (!arg.includes(':')) {
+        let cell = get_rId_cId_fromAddress(arg);
+        let value = db[cell.rowId][cell.colId].value;
+        return typeof value === 'string' ? value.toUpperCase() : value;
+    } else if (typeof value !== 'string') {
+        return "ERROR: Value is not a string";
+    } else {
+        return "ERROR: UPPER only works with single cells";
+    }
+}
+
+function lowerText(arg) {
+    if (!arg.includes(':')) {
+        let cell = get_rId_cId_fromAddress(arg);
+        let value = db[cell.rowId][cell.colId].value;
+        return typeof value === 'string' ? value.toLowerCase() : value;
+    } else if (typeof value !== 'string') {
+        return "ERROR: Value is not a string";
+    } else {
+        return "ERROR: LOWER only works with single cells";
+    }
+}
+
+
 function removeDuplicates(args) {
     let values = [];
     args.forEach(arg => {
@@ -1175,7 +1206,7 @@ function findAndReplace(range, find, replace) {
                 }
             }
         }
-        return "Replacement complete";
+        //return "Replacement complete";
     }
     return "ERROR: REPLACE needs a range";
 }
@@ -1227,13 +1258,11 @@ document.querySelector('.close-dialog').addEventListener('click', function() {
 
 //====================================================== SELECTION FUNCTION ==========================================================
 
-// Add these variables at the start of your script.js
 /*let isSelecting = false;
 let selectionStart = null;
 let selectionEnd = null;
 let selectionBox = null;
 
-// Add this function to create the selection overlay
 function createSelectionBox() {
     if (!selectionBox) {
         selectionBox = document.createElement('div');
@@ -1243,9 +1272,8 @@ function createSelectionBox() {
     return selectionBox;
 }
 
-// Add these event listeners after your existing cell event listeners
-cells.forEach(cell => {
-    // Add mousedown event for selection start
+// Mouse down event to start selection
+document.querySelectorAll('.cell').forEach(cell => {
     cell.addEventListener('mousedown', function(e) {
         if (e.button === 0) { // Left click only
             isSelecting = true;
@@ -1253,38 +1281,30 @@ cells.forEach(cell => {
                 row: parseInt(this.getAttribute('r-id')),
                 col: parseInt(this.getAttribute('c-id'))
             };
-            
-            // Clear any existing selection
-            createSelectionBox().style.display = 'none';
-            
-            // Remove any existing selected class
-            document.querySelectorAll('.cell.selected').forEach(cell => {
-                cell.classList.remove('selected');
-            });
-            
-            // Prevent default text selection
-            e.preventDefault();
+            selectionEnd = { ...selectionStart }; // Initialize selectionEnd at the start
+            updateSelection(); // Update the selection visually
+            e.preventDefault(); // Prevent text selection
         }
     });
 
-    // Add mouseover event for selection update
+    // Mouse over event to update the selection
     cell.addEventListener('mouseover', function(e) {
         if (isSelecting) {
             selectionEnd = {
                 row: parseInt(this.getAttribute('r-id')),
                 col: parseInt(this.getAttribute('c-id'))
             };
-            updateSelection();
+            updateSelection(); // Update selection on hover
         }
     });
 });
 
-// Add window mouseup event to end selection
+// Mouse up event to finish selection
 window.addEventListener('mouseup', function(e) {
     if (isSelecting) {
         isSelecting = false;
         if (selectionStart && selectionEnd) {
-            updateFormulaBarWithRange();
+            updateFormulaBarWithRange(); // Update formula bar when selection is done
         }
     }
 });
@@ -1292,37 +1312,33 @@ window.addEventListener('mouseup', function(e) {
 // Function to update the selection display
 function updateSelection() {
     if (!selectionStart || !selectionEnd) return;
-    
-    // Get the range of cells
+
     let startRow = Math.min(selectionStart.row, selectionEnd.row);
     let endRow = Math.max(selectionStart.row, selectionEnd.row);
     let startCol = Math.min(selectionStart.col, selectionEnd.col);
     let endCol = Math.max(selectionStart.col, selectionEnd.col);
-    
-    // Get the pixel positions
+
     let startCell = document.querySelector(`.cell[r-id="${startRow}"][c-id="${startCol}"]`);
     let endCell = document.querySelector(`.cell[r-id="${endRow}"][c-id="${endCol}"]`);
+
     let startRect = startCell.getBoundingClientRect();
     let endRect = endCell.getBoundingClientRect();
     
-    // Calculate the scrolled position
     let contentDiv = document.querySelector('.content');
     let scrollLeft = contentDiv.scrollLeft;
     let scrollTop = contentDiv.scrollTop;
-    
-    // Update selection box position and size
+
     let box = createSelectionBox();
     box.style.display = 'block';
-    box.style.left = (startRect.left + contentDiv.scrollLeft - contentDiv.getBoundingClientRect().left) + 'px';
-    box.style.top = (startRect.top + contentDiv.scrollTop - contentDiv.getBoundingClientRect().top) + 'px';
+    box.style.left = (startRect.left + scrollLeft - contentDiv.getBoundingClientRect().left) + 'px';
+    box.style.top = (startRect.top + scrollTop - contentDiv.getBoundingClientRect().top) + 'px';
     box.style.width = (endRect.right - startRect.left) + 'px';
     box.style.height = (endRect.bottom - startRect.top) + 'px';
-    
-    // Update selected cells styling
+
+    // Highlight selected cells
     document.querySelectorAll('.cell.selected').forEach(cell => {
         cell.classList.remove('selected');
     });
-    
     for (let i = startRow; i <= endRow; i++) {
         for (let j = startCol; j <= endCol; j++) {
             let cell = document.querySelector(`.cell[r-id="${i}"][c-id="${j}"]`);
@@ -1334,58 +1350,13 @@ function updateSelection() {
 // Function to update formula bar with the selected range
 function updateFormulaBarWithRange() {
     if (!selectionStart || !selectionEnd) return;
-    
+
     let startAddress = get_Address_from_rId_cId(selectionStart.row, selectionStart.col);
     let endAddress = get_Address_from_rId_cId(selectionEnd.row, selectionEnd.col);
-    
-    // If it's a single cell, just show that cell's address
+
     if (startAddress === endAddress) {
-        addressBar.value = startAddress;
+        document.querySelector('.FormulaInput').value = startAddress;
     } else {
-        addressBar.value = `${startAddress}:${endAddress}`;
+        document.querySelector('.FormulaInput').value = `${startAddress}:${endAddress}`;
     }
-}
-
-// Helper function to get selected range
-function getSelectedRange() {
-    if (!selectionStart || !selectionEnd) return null;
-    
-    let startAddress = get_Address_from_rId_cId(selectionStart.row, selectionStart.col);
-    let endAddress = get_Address_from_rId_cId(selectionEnd.row, selectionEnd.col);
-    
-    return startAddress === endAddress ? startAddress : `${startAddress}:${endAddress}`;
-}
-
-// Modify your existing cell click handler to work with selection
-cells.forEach(cell => {
-    cell.addEventListener('click', function(e) {
-        // Clear any existing selection
-        selectionStart = null;
-        selectionEnd = null;
-        if (selectionBox) {
-            selectionBox.style.display = 'none';
-        }
-        document.querySelectorAll('.cell.selected').forEach(cell => {
-            cell.classList.remove('selected');
-        });
-        
-        document.getElementById('insert-function').addEventListener('click', function() {
-            const functionSelect = document.getElementById('spreadsheet-functions');
-            const selectedFunction = functionSelect.value;
-            
-            if (selectedFunction === 'replace') {
-                document.querySelector('.find-replace-dialog').style.display = 'flex';
-            } else {
-                const formulaBar = document.querySelector('.FormulaInput');
-                formulaBar.value = `=${selectedFunction.toUpperCase()}()`;
-                formulaBar.focus();
-                
-                // If we have a selected range, insert it into the function
-                const selectedRange = getSelectedRange();
-                if (selectedRange) {
-                    formulaBar.value = `=${selectedFunction.toUpperCase()}(${selectedRange})`;
-                }
-            }
-        });
-    });
-});*/
+}*/

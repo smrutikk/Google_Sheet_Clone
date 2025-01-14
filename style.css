@@ -717,21 +717,17 @@ font-size: large;
 /* Style for the selection box overlay */
 .selection-box {
     position: absolute;
-    pointer-events: none;
-    border: 2px solid #1a73e8;
-    background-color: rgba(26, 115, 232, 0.1);
-    z-index: 100;
+    border: 1px dashed rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.1);
+    pointer-events: none; /* Prevents the selection box from interfering with mouse events */
+    z-index: 10;
 }
-
-/* Style for selected cells */
 .cell.selected {
-    background-color: rgba(26, 115, 232, 0.1);
+    background-color: rgba(0, 123, 255, 0.2); /* Highlight selected cells */
 }
 
-/* Prevent text selection during drag */
-.cell {
-    user-select: none;
-}
+
+
 
 /* Add a resize handle cursor when near cell borders */
 .cell:hover {
@@ -739,9 +735,7 @@ font-size: large;
 }
 
 /* Make sure the selection is visible even when scrolling */
-.cells {
-    position: relative;
-}
+
 
 /* Ensure the content area shows the full selection */
 .content {
