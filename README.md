@@ -18,6 +18,12 @@ Some key features of this project are:
 
 ---
 
+## Screenshots
+![Alt Text]([img/Screenshot 2025-02-04 111522.png])
+![Alt Text]([img/Screenshot 2025-02-04 111459.png])
+
+---
+
 ## Technical Stack:
 
 ### Frontend:
