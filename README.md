@@ -19,8 +19,10 @@ Some key features of this project are:
 ---
 
 ## Screenshots
-<img src="img/SS_1.png" alt="Google Sheets Clone" width="600" height="300">
-<img src="img/SS_2.png" alt="Google Sheets Clone" width="600" height="300">
+<div>
+   <img src="img/SS_1.png" alt="Google Sheets Clone" width="400" >
+   <img src="img/SS_2.png" alt="Google Sheets Clone" width="400" >
+</div>
 ---
 
 ## Technical Stack:
