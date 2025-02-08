@@ -19,8 +19,8 @@ Some key features of this project are:
 ---
 
 ## Screenshots
-![Alt Text]([img/SS_1.png])
-![Alt Text]([img/SS_2.png])
+![](img/SS_1.png)
+![](img/SS_2.png)
 
 ---
 
