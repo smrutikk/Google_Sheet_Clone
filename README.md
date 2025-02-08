@@ -19,9 +19,8 @@ Some key features of this project are:
 ---
 
 ## Screenshots
-![](img/SS_1.png)
-![](img/SS_2.png)
-
+<img src="img/SS_1.png" alt="Google Sheets Clone" width="600" height="300">
+<img src="img/SS_2.png" alt="Google Sheets Clone" width="600" height="300">
 ---
 
 ## Technical Stack:
